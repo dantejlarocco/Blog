@@ -1,0 +1,63 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Blog.Data;
+using Blog.Models;
+using Blog.Services;
+using Microsoft.EntityFrameworkCore;
+using Xunit;
+
+namespace Blog.Tests
+{
+    public class BlogServiceTests
+    {
+        private async Task<BlogContext> GetInMemoryContextAsync()
+        {
+            var options = new DbContextOptionsBuilder<BlogContext>()
+                .UseInMemoryDatabase(databaseName: $"BlogDb_{System.Guid.NewGuid()}")
+                .Options;
+
+            var context = new BlogContext(options);
+
+            // Seed sample data
+            context.BlogPosts.AddRange(
+                new BlogPost { Title = "Post 1", Content = "First post" },
+                new BlogPost { Title = "Post 2", Content = "Second post" }
+            );
+            await context.SaveChangesAsync();
+
+            return context;
+        }
+
+        [Fact]
+        public async Task GetAllAsync_ReturnsAllPosts()
+        {
+            // Arrange
+            var context = await GetInMemoryContextAsync();
+            var service = new BlogService(context);
+
+            // Act
+            var posts = await service.GetAllAsync();
+
+            // Assert
+            Assert.Equal(2, posts.Count());
+        }
+
+        [Fact]
+        public async Task AddAsync_AddsNewPostToDatabase()
+        {
+            // Arrange
+            var context = await GetInMemoryContextAsync();
+            var service = new BlogService(context);
+            var newPost = new BlogPost { Title = "New Post", Content = "Testing Add" };
+
+            // Act
+            await service.AddAsync(newPost);
+            var posts = await service.GetAllAsync();
+
+            // Assert
+            Assert.Contains(posts, p => p.Title == "New Post");
+        }
+    }
+}

@@ -1,0 +1,58 @@
+@page "/blog"
+@inject Blog.Services.IBlogService BlogService
+
+<h3 class="mb-3">Blog Posts</h3>
+
+<EditForm Model="@newPost" OnValidSubmit="AddPost">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-2">
+        <InputText @bind-Value="newPost.Title" class="form-control" placeholder="Title" />
+    </div>
+
+    <div class="mb-2">
+        <InputTextArea @bind-Value="newPost.Content" class="form-control" placeholder="Write something..." />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Post</button>
+</EditForm>
+
+<hr />
+
+@if (posts is null)
+{
+    <p>Loading...</p>
+}
+else if (!posts.Any())
+{
+    <p>No posts yet.</p>
+}
+else
+{
+    @foreach (var post in posts)
+    {
+        <div class="card my-2 p-3 shadow-sm">
+            <h5>@post.Title</h5>
+            <small class="text-muted">@post.CreatedAt.ToLocalTime()</small>
+            <p>@post.Content</p>
+        </div>
+    }
+}
+
+@code {
+    private List<BlogPost>? posts;
+    private BlogPost newPost = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        posts = (await BlogService.GetAllAsync()).ToList();
+    }
+
+    private async Task AddPost()
+    {
+        await BlogService.AddAsync(newPost);
+        newPost = new();
+        posts = (await BlogService.GetAllAsync()).ToList();
+    }
+}
