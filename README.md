@@ -5,7 +5,7 @@ It demonstrates a minimal **Blog Post Management** module where users can create
 
 ---
 
-## 🧱 Architecture Overview
+## Overview
 
 The project is structured to emphasize **separation of concerns** and **testability**:
 
@@ -22,7 +22,7 @@ Blog/
 └── Tests/ → xUnit unit tests
 
 
-### Key Design Choices
+### Design Choices
 - **SOLID principles** enforced:
   - **S**ingle Responsibility: Each class has one clear purpose.
   - **O**pen/Closed: Business logic is extendable without modification.
@@ -36,7 +36,7 @@ Blog/
 
 ---
 
-## ⚙️ Technology Stack
+## Technologies
 
 | Layer | Technology |
 |-------|-------------|
@@ -48,7 +48,7 @@ Blog/
 
 ---
 
-## 🚀 Getting Started
+## Steps to use
 
 1. **Clone Repository**
    ```
